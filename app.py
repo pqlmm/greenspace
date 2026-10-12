@@ -18,7 +18,18 @@ st.set_page_config(
     layout="wide",
 )
 
-DATA_PATH = Path(__file__).parent / "data" / "urban-green-space-publication.csv"
+APP_DIR = Path(__file__).parent
+CSV_NAME = "urban-green-space-publication.csv"
+
+
+def find_data_file() -> Path | None:
+    """หาไฟล์ CSV ทั้งในโฟลเดอร์ data/ และโฟลเดอร์เดียวกับ app.py"""
+    for candidate in (APP_DIR / "data" / CSV_NAME, APP_DIR / CSV_NAME):
+        if candidate.exists():
+            return candidate
+    # เผื่อชื่อไฟล์ถูกเปลี่ยน ให้หยิบ CSV ไฟล์แรกที่เจอ
+    found = sorted(APP_DIR.glob("*.csv")) + sorted((APP_DIR / "data").glob("*.csv"))
+    return found[0] if found else None
 
 CATEGORY_COLORS = {
     "คู่มือ": "#2E7D32",
@@ -57,6 +68,14 @@ def load_data(path: Path) -> pd.DataFrame:
     df["title_length"] = df["title"].str.len()
     return df
 
+
+DATA_PATH = find_data_file()
+if DATA_PATH is None:
+    st.error(
+        f"ไม่พบไฟล์ `{CSV_NAME}` — กรุณาอัปโหลดไฟล์ CSV ไว้ในโฟลเดอร์ `data/` "
+        "หรือโฟลเดอร์เดียวกับ `app.py` ใน GitHub repository"
+    )
+    st.stop()
 
 df = load_data(DATA_PATH)
 
