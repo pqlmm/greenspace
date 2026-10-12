@@ -18,7 +18,7 @@ st.set_page_config(
     layout="wide",
 )
 
-DATA_PATH = Path(__file__).parent / "data" / "urban-green-space-publication.csv"
+DATA_PATH = Path(__file__).parent / "urban-green-space-publication.csv"
 
 CATEGORY_COLORS = {
     "คู่มือ": "#2E7D32",
